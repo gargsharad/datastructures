@@ -5,7 +5,7 @@ package com.sharad.ds.stack;
  */
 public interface Stack<E> {
 	
-	public void push(E e);
+	public boolean push(E e);
 
 	public E pop();
 
