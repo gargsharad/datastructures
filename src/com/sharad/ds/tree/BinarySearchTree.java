@@ -96,9 +96,12 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
 	}
 
 	// delete
+	
+	// general algorithm is: to delete N, if it has two subtrees, replace the value in N with
+	// the largest value in its left subtree and then delete the node with the largest value from its left subtree.
 	public void deleteByMerging(T el) {
 		BinarySearchTreeNode<T> tmp, node, p = root, prev = null;
-		while (p != null && !p.getEl().equals(el)) { 			// find the node p with element el
+		while (p != null && !p.getEl().equals(el)) { // find the node p with element el
 			prev = p;
 			if (el.compareTo(p.getEl()) < 0)
 				p = p.getRightChild();
@@ -106,42 +109,70 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
 				p = p.getLeftChild();
 		}
 		node = p;  // node found
-		
 		if (p != null && p.getEl().equals(el)) {
-			if (node.getRightChild() == null) 					// node has no right child: its left
-				node = node.getLeftChild(); 					// child (if any) is attached to its parent;
-			else if (node.getLeftChild() == null) 				// node has no left child: its right
-				node = node.getRightChild(); 					// child is attached to its parent;
-			else { 												// be ready for merging subtrees;
-				tmp = node.getLeftChild(); 						// 1.	move left
+			if (node.getRightChild() == null)		// node has no right child: its left
+				node = node.getLeftChild();		// child (if any) is attached to its parent;
+			else if (node.getLeftChild() == null)		// node has no left child: its right
+				node = node.getRightChild();		// child is attached to its parent;
+			else { 						// be ready for merging subtrees;
+				tmp = node.getLeftChild(); 				// 1.	move left
 				while (tmp.getRightChild() != null){
-					tmp = tmp.getRightChild();					// 2. 	and then right as far as
-				}												// 		possible;
-					tmp.setRightChild(node.getRightChild()); 	// 3. 	establish the link between
-																// 		the rightmost node of the left
-																// 		subtree and the right subtree;
-				node = node.getLeftChild(); 					// 4.
+					tmp = tmp.getRightChild();			// 2. 	and then right as far as possible;
+				}	
+				tmp.setRightChild(node.getRightChild()); 		// 3. 	establish the link between the rightmost node of the left subtree and the right subtree;
+				node = node.getLeftChild(); 				// 4.
 			}
-			
 			// below we actually removed the node
 			if (p == root)
 				root = node;
 			else if (prev.getLeftChild() == p)
 				prev.setLeftChild(node);
 			else
-				prev.setRightChild(node); 						// 5.
-			
+				prev.setRightChild(node); 				// 5.
 		} else if (root != null)
 			System.out.println("el " + el + " is not in the tree");
 		else
 			System.out.println("the tree is empty");
 	}
-	// general algorithm is: to delete N, if it has two subtrees, replace the
-	// value in N with
-	// the largest value in its left subtree and then delete the node with the
-	// largest value
-	// from its left subtree.
-
+	
+	
+	public void deleteByCopying(T el) {
+	        BinarySearchTreeNode<T> node, p = root, prev = null;
+	        while (p != null && !p.getEl().equals(el)) {  // find the node p
+	             prev = p;                           // with element el;
+	             if (el.compareTo(p.getEl()) < 0)
+	                  p = p.getLeftChild();
+	             else p = p.getRightChild();
+	        }
+	        node = p;
+	        if (p != null && p.getEl().equals(el)) {
+	             if (node.getRightChild() == null)             // node has no right child;
+	                  node = node.getLeftChild();
+	             else if (node.getLeftChild() == null)         // no left child for node;
+	                  node = node.getRightChild();
+	             else {
+	                  BinarySearchTreeNode<T> tmp = node.getLeftChild();    // node has both children;
+	                  BinarySearchTreeNode<T> previous = node;    // 1.
+	                  while (tmp.getRightChild() != null) {    // 2. find the rightmost
+	                      previous = tmp;            //    position in the
+	                      tmp = tmp.getRightChild();           //    left subtree of node;
+	                  }
+	                  node.setEl(tmp.getEl());              // 3. overwrite the reference
+	                                                 //    to the element being deleted;
+	                  if (previous == node)          // if node's left child's
+	                      previous.setLeftChild(tmp.getLeftChild()); // right subtree is null;
+	                 else previous.setRightChild(tmp.getLeftChild()); // 4.
+	             }
+	             if (p == root)
+	                  root = node;
+	             else if (prev.getLeftChild() == p)
+	                  prev.setLeftChild(node);
+	             else prev.setRightChild(node);
+	        }
+	        else if (root != null)
+	             System.out.println("el " + el + " is not in the tree");
+	        else System.out.println("the tree is empty");
+	    }
 	// serch
 	
 	
